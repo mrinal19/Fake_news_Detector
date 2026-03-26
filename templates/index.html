@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Fake News Detector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🧠 AI Fake News Detector</h1>
+    <p class="subtitle">Real-time AI-powered credibility analysis</p>
+
+    <textarea id="text" placeholder="Paste news content here..."></textarea>
+    <button onclick="predict()">Analyze</button>
+
+    <div class="loader" id="loader">⏳ Thinking...</div>
+
+    <div class="result" id="result">
+        <h2 id="label"></h2>
+
+        <div>
+            Fake Probability
+            <div class="bar"><div id="fakeBar" class="fill"></div></div>
+        </div>
+
+        <div>
+            Real Probability
+            <div class="bar"><div id="realBar" class="fill"></div></div>
+        </div>
+
+        <p id="confidence"></p>
+    </div>
+</div>
+
+<script>
+async function predict() {
+    const text = document.getElementById("text").value;
+    const loader = document.getElementById("loader");
+    const result = document.getElementById("result");
+
+    loader.style.display = "block";
+    result.style.display = "none";
+
+    const res = await fetch('/predict', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({text})
+    });
+
+    const data = await res.json();
+
+    loader.style.display = "none";
+    result.style.display = "block";
+
+    document.getElementById("label").innerHTML =
+        data.prediction === "FAKE" ? "🚨 Fake News" :
+        data.prediction === "REAL" ? "✅ Real News" : "⚠️ Uncertain";
+
+    document.getElementById("confidence").innerHTML =
+        "Confidence: " + data.confidence + "%";
+
+    document.getElementById("fakeBar").style.width =
+        data.fake_probability + "%";
+
+    document.getElementById("realBar").style.width =
+        data.real_probability + "%";
+}
+</script>
+
+</body>
+</html>
