@@ -56,12 +56,6 @@ fake_news_detector/
 
 ---
 
-## 📸 Preview
-
-(Add your screenshot here if you want 😉)
-
----
-
 ## 🚀 Run Locally
 
 ```bash
